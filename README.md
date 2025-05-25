@@ -8,25 +8,26 @@ console.
 ## Setup
 
 1. Clone this repository.
-2. Install Node.js (version 16 or newer).
+2. Install Python (3.8 or newer) and `pip`.
 3. Install the project dependencies:
    ```bash
-   npm install
+   pip install -e .
    ```
-
-## Dependencies
-
-The project relies on the `ws` package for WebSocket communication. Running
-`npm install` will download it automatically along with any other libraries
-required by the example.
+   To install test dependencies as well use:
+   ```bash
+   pip install -e .[test]
+   ```
 
 ## Running
 
-1. Edit `config.js` to specify your Hetzner WebSocket endpoint.
-2. Start the monitor with:
-   ```bash
-   node monitor.js
-   ```
+Run the application with:
+```bash
+python main.py
+```
 
-Once started, the monitor will connect to the configured server and display
-incoming messages in your terminal.
+## Running Tests
+
+The project uses `pytest`. To run the tests execute:
+```bash
+pytest
+```
