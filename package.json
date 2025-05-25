@@ -1,0 +1,12 @@
+{
+  "name": "hetzner-websocket-monitor",
+  "version": "1.0.0",
+  "description": "Simple WebSocket monitor example",
+  "main": "monitor.js",
+  "scripts": {
+    "start": "node monitor.js"
+  },
+  "dependencies": {
+    "ws": "^8.15.1"
+  }
+}

@@ -14,19 +14,23 @@ console.
    npm install
    ```
 
-## Dependencies
+## Configuration
 
-The project relies on the `ws` package for WebSocket communication. Running
-`npm install` will download it automatically along with any other libraries
-required by the example.
+Edit `config.js` and specify the WebSocket endpoint you want to use:
+
+```javascript
+module.exports = {
+  endpoint: 'wss://your.server.example/ws'
+};
+```
 
 ## Running
 
-1. Edit `config.js` to specify your Hetzner WebSocket endpoint.
-2. Start the monitor with:
-   ```bash
-   node monitor.js
-   ```
+Start the monitor from the command line:
+
+```bash
+npm start
+```
 
 Once started, the monitor will connect to the configured server and display
 incoming messages in your terminal.
