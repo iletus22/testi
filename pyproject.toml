@@ -1,0 +1,9 @@
+[project]
+name = "hetzner-ws-monitor"
+version = "0.1.0"
+dependencies = [
+    "websockets>=11.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
