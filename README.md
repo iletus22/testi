@@ -1,21 +1,23 @@
-# PySide6 Desktop Template
+# Monitor Demo
 
-This repository contains a minimal Python project that demonstrates the basic structure for a desktop application using PySide6. The modules are placeholders that can be expanded into a full application.
+This project provides a minimal starting point for a PySide6-based desktop monitor. It contains placeholder modules for the graphical interface, persistent settings, and data storage.
 
 ## Setup
 
-1. Clone this repository.
-2. Ensure you have Python 3.8 or newer installed.
-3. Install the dependencies:
-   ```bash
-   pip install PySide6
-   ```
+1. Clone the repository.
+2. Ensure Python 3.8 or newer is available on your system.
+3. Install the required dependency:
 
-## Running
+```bash
+pip install PySide6
+```
 
-Run the example application with:
+## Launching the Monitor
+
+Run the main module to start the monitor window:
+
 ```bash
 python main.py
 ```
 
-The current implementation does not provide full functionality. It simply sets up the application structure with `GUI`, `Storage`, and `Settings` classes ready for further development.
+The current implementation offers only the bare application skeleton, but it can be extended with custom logic inside `GUI`, `Settings`, and `Storage`.
