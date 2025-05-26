@@ -1,26 +1,58 @@
 class WebSocketClient:
-    """A minimal placeholder WebSocket client."""
+    """Minimal asynchronous WebSocket client."""
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, reconnect: bool = False) -> None:
         self.url = url
         self.connection = None
+        self.reconnect = reconnect
 
-    def connect(self) -> None:
-        """Placeholder connect method."""
-        # Implement connection logic here
-        pass
+    async def connect(self) -> None:
+        """Establish a WebSocket connection."""
+        # ``websockets`` is imported lazily so tests can stub it easily.
+        import websockets  # type: ignore
 
-    def send(self, message: str) -> None:
-        """Placeholder send method."""
-        # Implement message sending logic here
-        pass
+        self.connection = await websockets.connect(self.url)
 
-    def receive(self) -> str:
-        """Placeholder receive method."""
-        # Implement message receiving logic here
-        return ""
+    async def _reconnect(self) -> None:
+        await self.close()
+        await self.connect()
 
-    def close(self) -> None:
-        """Placeholder close method."""
-        # Implement closing logic here
-        pass
+    async def send(self, message: str) -> None:
+        """Send ``message`` if a connection exists."""
+        if self.connection is None:
+            raise RuntimeError("Not connected")
+
+        try:
+            await self.connection.send(message)
+        except Exception:
+            if self.reconnect:
+                await self._reconnect()
+                await self.connection.send(message)
+            else:
+                raise
+
+    async def receive(self) -> str:
+        """Receive a message if a connection exists."""
+        if self.connection is None:
+            raise RuntimeError("Not connected")
+
+        try:
+            return await self.connection.recv()
+        except Exception:
+            if self.reconnect:
+                await self._reconnect()
+                return await self.connection.recv()
+            raise
+
+    async def close(self) -> None:
+        """Close the connection if present."""
+        if self.connection is not None:
+            await self.connection.close()
+            self.connection = None
+
+    async def __aenter__(self) -> "WebSocketClient":
+        await self.connect()
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb) -> None:
+        await self.close()
