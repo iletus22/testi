@@ -1,16 +1,10 @@
-from pathlib import Path
-
-from gui import GUI
-from storage import Storage
-from settings import Settings
+from gui import run
 
 
-def main():
-    gui = GUI()
-    storage = Storage(Path("data.db"))
-    settings = Settings()
-    # Placeholder for application run logic
-    pass
+def main() -> int:
+    """Entry point for the monitor application."""
+
+    return run()
 
 
 if __name__ == "__main__":
