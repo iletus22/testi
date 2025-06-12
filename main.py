@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from gui import GUI
 from storage import Storage
 from settings import Settings
@@ -5,7 +7,7 @@ from settings import Settings
 
 def main():
     gui = GUI()
-    storage = Storage()
+    storage = Storage(Path("data.db"))
     settings = Settings()
     # Placeholder for application run logic
     pass
