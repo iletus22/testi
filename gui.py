@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import sys
-from pathlib import Path
 from typing import Optional
 
 from PySide6.QtCore import QMetaObject, Qt, Q_ARG, QThread, Signal, Slot
@@ -121,15 +120,12 @@ class MainWindow(QMainWindow):
         super().closeEvent(event)
 
 
-def run(url: str, save_to_db: bool = True) -> int:  # pragma: no cover - Qt
+def run(url: str, *, storage: Optional[Storage] = None) -> int:  # pragma: no cover - Qt
     """Launch the application."""
 
     app = QApplication.instance() or QApplication(sys.argv)
-    storage = Storage(Path("data.db")) if save_to_db else None
     window = MainWindow(url, storage=storage)
     window.show()
     ret = app.exec()
-    if storage is not None:
-        storage.close()
     return ret
 
