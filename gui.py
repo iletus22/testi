@@ -121,14 +121,15 @@ class MainWindow(QMainWindow):
         super().closeEvent(event)
 
 
-def run() -> int:  # pragma: no cover - Qt
+def run(url: str, save_to_db: bool = True) -> int:  # pragma: no cover - Qt
     """Launch the application."""
 
     app = QApplication.instance() or QApplication(sys.argv)
-    storage = Storage(Path("data.db"))
-    window = MainWindow("ws://example.com", storage=storage)
+    storage = Storage(Path("data.db")) if save_to_db else None
+    window = MainWindow(url, storage=storage)
     window.show()
     ret = app.exec()
-    storage.close()
+    if storage is not None:
+        storage.close()
     return ret
 
