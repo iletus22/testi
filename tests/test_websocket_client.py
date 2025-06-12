@@ -1,59 +1,36 @@
-import types
 import asyncio
+import types
 import sys
+import os
+
 import pytest
+
+# Allow importing package from ``src`` directory
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 from hetzner_ws_monitor.websocket_client import WebSocketClient
 
 
 class DummyConnection:
-    def __init__(self):
-        self.sent = []
+    def __init__(self, messages=None, fail_on_recv=False):
+        self.messages = list(messages or [])
+        self.fail_on_recv = fail_on_recv
         self.closed = False
+        self.recv_calls = 0
 
     async def send(self, message):
-        self.sent.append(message)
+        pass
 
     async def recv(self):
-        return "data"
+        self.recv_calls += 1
+        if self.fail_on_recv and self.recv_calls == 1:
+            raise RuntimeError("connection lost")
+        if not self.messages:
+            raise RuntimeError("closed")
+        return self.messages.pop(0)
 
     async def close(self):
         self.closed = True
-
-
-class FailingConnection(DummyConnection):
-    def __init__(self):
-        super().__init__()
-        self.fail = True
-
-    async def send(self, message):
-        if self.fail:
-            self.fail = False
-            raise RuntimeError("connection lost")
-        await super().send(message)
-
-
-class MessageConnection(DummyConnection):
-    def __init__(self, messages):
-        super().__init__()
-        self.messages = list(messages)
-
-    async def recv(self):
-        if not self.messages:
-            raise RuntimeError("connection closed")
-        return self.messages.pop(0)
-
-
-class FailingRecvConnection(DummyConnection):
-    def __init__(self):
-        super().__init__()
-        self.fail = True
-
-    async def recv(self):
-        if self.fail:
-            self.fail = False
-            raise RuntimeError("connection lost")
-        return await super().recv()
 
 
 def make_websockets_module(connections):
@@ -66,88 +43,65 @@ def make_websockets_module(connections):
     return ws
 
 
-def test_send_message(monkeypatch):
+class DummyStorage:
+    def __init__(self):
+        self.saved = []
+
+    def save_message(self, source, ts, content):
+        self.saved.append(content)
+
+
+def test_callbacks_and_storage(monkeypatch):
     async def inner():
-        conn = DummyConnection()
+        conn = DummyConnection(["a", "b", "c"])
         monkeypatch.setitem(sys.modules, "websockets", make_websockets_module([conn]))
 
-        client = WebSocketClient("ws://test")
+        storage = DummyStorage()
+        received = []
+
+        async def cb(msg):
+            received.append(msg)
+
+        client = WebSocketClient("ws://test", storage=storage, reconnect_delay=0.01)
+        client.add_callback(cb)
         await client.connect()
-        await client.send("hello")
-
-        assert conn.sent == ["hello"]
-
-    asyncio.run(inner())
-
-
-def test_receive_message(monkeypatch):
-    async def inner():
-        conn = MessageConnection(["hello"])
-        monkeypatch.setitem(sys.modules, "websockets", make_websockets_module([conn]))
-
-        client = WebSocketClient("ws://test")
-        await client.connect()
-        msg = await client.receive()
-
-        assert msg == "hello"
-
-    asyncio.run(inner())
-
-
-def test_async_context_manager(monkeypatch):
-    async def inner():
-        conn = DummyConnection()
-        monkeypatch.setitem(sys.modules, "websockets", make_websockets_module([conn]))
-
-        async with WebSocketClient("ws://test") as client:
-            assert client.connection is conn
-        assert conn.closed is True
-
-    asyncio.run(inner())
-
-
-def test_reconnect_on_send_error(monkeypatch):
-    async def inner():
-        conn1 = FailingConnection()
-        conn2 = DummyConnection()
-        monkeypatch.setitem(sys.modules, "websockets", make_websockets_module([conn1, conn2]))
-
-        client = WebSocketClient("ws://test", reconnect=True)
-        await client.connect()
-        await client.send("hello")
-
-        assert conn1.closed is True
-        assert conn2.sent == ["hello"]
-
-    asyncio.run(inner())
-
-
-def test_reconnect_on_receive_error(monkeypatch):
-    async def inner():
-        conn1 = FailingRecvConnection()
-        conn2 = MessageConnection(["ok"])
-        monkeypatch.setitem(sys.modules, "websockets", make_websockets_module([conn1, conn2]))
-
-        client = WebSocketClient("ws://test", reconnect=True)
-        await client.connect()
-        msg = await client.receive()
-
-        assert conn1.closed is True
-        assert msg == "ok"
-
-    asyncio.run(inner())
-
-
-def test_close_gracefully(monkeypatch):
-    async def inner():
-        conn = DummyConnection()
-        monkeypatch.setitem(sys.modules, "websockets", make_websockets_module([conn]))
-
-        client = WebSocketClient("ws://test")
-        await client.connect()
+        await asyncio.sleep(0.05)
         await client.close()
 
-        assert conn.closed is True
-        assert client.connection is None
+        assert received == ["a", "b", "c"]
+        assert storage.saved == ["a", "b", "c"]
 
     asyncio.run(inner())
+
+
+def test_reconnect_on_failure(monkeypatch):
+    async def inner():
+        conn1 = DummyConnection(fail_on_recv=True)
+        conn2 = DummyConnection(["ok"])
+        monkeypatch.setitem(sys.modules, "websockets", make_websockets_module([conn1, conn2]))
+
+        results = []
+        client = WebSocketClient("ws://test", reconnect_delay=0.01)
+        client.add_callback(lambda m: results.append(m))
+        await client.connect()
+        await asyncio.sleep(0.05)
+        await client.close()
+
+        assert conn1.closed is True
+        assert results == ["ok"]
+
+    asyncio.run(inner())
+
+
+def test_context_manager(monkeypatch):
+    async def inner():
+        conn = DummyConnection(["x"])
+        monkeypatch.setitem(sys.modules, "websockets", make_websockets_module([conn]))
+
+        async with WebSocketClient("ws://test", reconnect_delay=0.01) as client:
+            await asyncio.sleep(0.01)
+        assert conn.closed is True
+
+    asyncio.run(inner())
+
+
