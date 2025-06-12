@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Python dependencies
+        run: python -m pip install -e ".[dev]"
+      - name: Run tests
+        run: pytest -q
+      - name: Build Docker image
+        run: docker build -t ws_monitor .
+      - name: Save Docker image
+        run: docker save ws_monitor | gzip > ws_monitor.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: ws_monitor.tar.gz
