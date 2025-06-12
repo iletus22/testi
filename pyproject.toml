@@ -2,7 +2,8 @@
 name = "testi"
 version = "0.1.0"
 dependencies = [
-    "PySide6"
+    "PySide6",
+    "websockets>=11.0"
 ]
 
 [project.optional-dependencies]
