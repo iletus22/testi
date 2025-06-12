@@ -1,7 +1,11 @@
 import types
 import asyncio
 import sys
+import os
 import pytest
+
+# Allow importing the package from the ``src`` directory without installing it
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 from hetzner_ws_monitor.websocket_client import WebSocketClient
 
