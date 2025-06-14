@@ -3,7 +3,10 @@ from __future__ import annotations
 import asyncio
 import os
 from datetime import datetime
-from typing import Any, Callable, Awaitable, List, Optional, Dict
+from typing import Any, Callable, List, Optional, Dict, TYPE_CHECKING
+
+if TYPE_CHECKING:  # pragma: no cover - only for type checking
+    from .storage import Storage
 
 
 class WebSocketClient:

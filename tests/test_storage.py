@@ -1,15 +1,13 @@
 import os
 import sys
 from datetime import datetime, timedelta
-from pathlib import Path
-import sqlite3
 import pytest
 
 # Ensure the project root is on ``sys.path`` so ``storage`` can be imported
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 
-from hetzner_ws_monitor.storage import Storage
+from hetzner_ws_monitor.storage import Storage  # noqa: E402
 
 
 def test_save_and_get_last(tmp_path):

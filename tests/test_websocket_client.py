@@ -3,7 +3,6 @@ import types
 import sys
 import os
 
-import pytest
 
 # Allow importing package from ``src`` directory
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
@@ -98,7 +97,7 @@ def test_context_manager(monkeypatch):
         conn = DummyConnection(["x"])
         monkeypatch.setitem(sys.modules, "websockets", make_websockets_module([conn]))
 
-        async with WebSocketClient("ws://test", reconnect_delay=0.01) as client:
+        async with WebSocketClient("ws://test", reconnect_delay=0.01) as _client:
             await asyncio.sleep(0.01)
         assert conn.closed is True
 

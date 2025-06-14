@@ -2,23 +2,21 @@ name: PyInstaller Build
 on:
   workflow_dispatch:
   push:
-    tags:
-      - 'v*'
+    tags: ['v*']
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+        with: { python-version: '3.11' }
       - name: Install Qt deps
         run: sudo apt-get update && sudo apt-get install -y \
              libxcb-cursor0 libxcb-xinerama0
       - run: python -m pip install pyinstaller
       - run: python -m pip install -e .
       - run: pyinstaller src/hetzner_ws_monitor/main.py --onefile -n monitor
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: monitor
           path: dist/monitor*

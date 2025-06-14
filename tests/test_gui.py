@@ -9,7 +9,7 @@ from hetzner_ws_monitor.gui import MainWindow
 
 
 def test_mainwindow_basic():
-    app = QApplication.instance() or QApplication([])
+    _app = QApplication.instance() or QApplication([])
     w = MainWindow("ws://test")
     assert w.list_widget.count() >= 0
     w.close()
