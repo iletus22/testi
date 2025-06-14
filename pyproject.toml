@@ -3,18 +3,17 @@ name = "testi"
 version = "0.1.0"
 dependencies = [
     "PySide6",
-    "websockets>=11.0"
+    "websockets>=11.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest"
+    "pytest",
+    "pyinstaller",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest"
-]
+[project.scripts]
+monitor = "hetzner_ws_monitor.main:main"
 
 [build-system]
 requires = ["setuptools>=61"]

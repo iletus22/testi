@@ -11,7 +11,7 @@ sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "src"))
 
 from hetzner_ws_monitor.websocket_client import WebSocketClient
-from storage import Storage
+from hetzner_ws_monitor.storage import Storage
 
 websockets = pytest.importorskip("websockets")
 

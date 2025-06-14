@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import os
 from datetime import datetime
-from typing import Any, Callable, Awaitable, List, Optional
+from typing import Any, Callable, Awaitable, List, Optional, Dict
 
 
 class WebSocketClient:
@@ -25,7 +26,13 @@ class WebSocketClient:
 
     async def _establish_connection(self) -> None:
         import websockets  # type: ignore
-        self.connection = await websockets.connect(self.url)
+        headers: Dict[str, str] = {}
+        token = os.environ.get("HETZNER_TOKEN")
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+        self.connection = await websockets.connect(
+            self.url, extra_headers=headers or None
+        )
 
     async def send(self, message: str) -> None:
         """Send ``message`` if a connection exists."""
