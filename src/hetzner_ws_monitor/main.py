@@ -1,9 +1,9 @@
 from pathlib import Path
 import argparse
 
-from hetzner_ws_monitor.gui import run
-from hetzner_ws_monitor.settings import Settings
-from hetzner_ws_monitor.storage import Storage
+from .gui import run
+from .settings import Settings
+from .storage import Storage
 
 
 def main(argv: list[str] | None = None) -> int:

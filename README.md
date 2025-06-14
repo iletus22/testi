@@ -1,23 +1,24 @@
-# Monitor Demo
+# Hetzner WebSocket Monitor
 
-This project provides a minimal starting point for a PySide6-based desktop monitor. It contains placeholder modules for the graphical interface, persistent settings, and data storage.
+[![CI](https://img.shields.io/github/actions/workflow/status/iletus22/testi/ci.yml?branch=main)](https://github.com/iletus22/testi/actions)
+[![Docker](https://img.shields.io/badge/docker-image-blue)](https://github.com/iletus22/testi)
 
-## Setup
+Simple desktop monitor for WebSocket feeds built with PySide6.
 
-1. Clone the repository.
-2. Ensure Python 3.8 or newer is available on your system.
-3. Install the required dependency:
-
-```bash
-pip install PySide6
-```
-
-## Launching the Monitor
-
-Run the main module to start the monitor window:
+## Quick start
 
 ```bash
-python main.py
+pipx install 'git+https://github.com/iletus22/testi'
+monitor --url wss://echo.websocket.events
 ```
 
-The current implementation offers only the bare application skeleton, but it can be extended with custom logic inside `GUI`, `Settings`, and `Storage`.
+## Development
+
+Install dependencies and run tests:
+
+```bash
+python -m pip install -e ".[dev]"
+pytest -q
+```
+
+The application code lives under `src/hetzner_ws_monitor/`.

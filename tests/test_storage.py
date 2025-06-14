@@ -9,7 +9,7 @@ import pytest
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 
-from storage import Storage
+from hetzner_ws_monitor.storage import Storage
 
 
 def test_save_and_get_last(tmp_path):

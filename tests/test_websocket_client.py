@@ -36,7 +36,7 @@ class DummyConnection:
 def make_websockets_module(connections):
     ws = types.SimpleNamespace()
 
-    async def connect(url):
+    async def connect(url, **kwargs):
         return connections.pop(0)
 
     ws.connect = connect

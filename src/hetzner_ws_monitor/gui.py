@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 )
 
 from hetzner_ws_monitor import WebSocketClient
-from storage import Storage
+from .storage import Storage
 
 
 class _ClientThread(QThread):
