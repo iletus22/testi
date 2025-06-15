@@ -1,12 +1,11 @@
 import os
 import sys
 import json
-from pathlib import Path
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 
-from settings import Settings
+from hetzner_ws_monitor.settings import Settings  # noqa: E402
 
 
 def test_defaults_created(tmp_path):

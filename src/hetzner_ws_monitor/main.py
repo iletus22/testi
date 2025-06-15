@@ -1,9 +1,9 @@
 from pathlib import Path
 import argparse
 
-from gui import run
-from settings import Settings
-from storage import Storage
+from .gui import run
+from .settings import Settings
+from .storage import Storage
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -1,7 +1,6 @@
 import asyncio
 import os
 import sys
-from pathlib import Path
 
 import pytest
 
@@ -10,8 +9,8 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "src"))
 
-from hetzner_ws_monitor.websocket_client import WebSocketClient
-from storage import Storage
+from hetzner_ws_monitor.websocket_client import WebSocketClient  # noqa: E402
+from hetzner_ws_monitor.storage import Storage  # noqa: E402
 
 websockets = pytest.importorskip("websockets")
 
